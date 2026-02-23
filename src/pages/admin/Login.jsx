@@ -6,7 +6,7 @@ import { useState } from "react";
 export default function Login() {
     const navigate = useNavigate();
     const [error, setError] = useState("");
-    const ADMIN_EMAIL = "bhuvaneswar88862@gmail.com";
+    const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 
     const handleLogin = async () => {
         try {
