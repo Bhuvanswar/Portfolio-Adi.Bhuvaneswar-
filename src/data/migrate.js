@@ -1,5 +1,3 @@
-import { db } from "../firebase";
-import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
 // import { projectsData } from "./projects"; // Data has been migrated and file removed
 // import { achievementsData } from "./achievements";
 const projectsData = [];

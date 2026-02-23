@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { db } from "../../firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import { HiOutlineSave, HiOutlineUser } from "react-icons/hi";
 
 export default function BioManager() {
@@ -15,7 +13,7 @@ export default function BioManager() {
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState("");
 
-    const bioDocRef = doc(db, "config", "bio");
+    // const bioDocRef = doc(db, "config", "bio");
 
     useEffect(() => {
         const fetchBio = async () => {

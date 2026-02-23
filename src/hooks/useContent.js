@@ -1,67 +1,26 @@
 import { useState, useEffect } from "react";
-import { db } from "../firebase";
-import { collection, onSnapshot, query, orderBy, doc } from "firebase/firestore";
 
-// Hook for collections (Projects, Achievements)
+// Placeholder hook for collections
 export function useCollection(collectionName, orderField = "id", orderDirection = "asc") {
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!db) {
-            console.warn('Firebase not configured; returning empty data.');
-            setLoading(false);
-            setError(new Error('Firebase not configured'));
-            return;
-        }
-
-        const q = query(
-            collection(db, collectionName),
-            orderBy(orderField, orderDirection)
-        );
-
-        const unsubscribe = onSnapshot(
-            q,
-            (snapshot) => {
-                const items = snapshot.docs.map((doc) => ({
-                    ...doc.data(),
-                    id: doc.id
-                }));
-                setData(items);
-                setLoading(false);
-            },
-            (err) => {
-                console.error(`Error fetching collection ${collectionName}:`, err);
-                setError(err);
-                setLoading(false);
-            }
-        );
-
-        return () => unsubscribe();
+        console.warn(`useCollection called for ${collectionName}, but Firestore is removed.`);
     }, [collectionName, orderField, orderDirection]);
+
     return { data, loading, error };
 }
 
-// Hook for a single document (Bio, Resume link)
+// Placeholder hook for a single document
 export function useDocument(collectionName, docId) {
     const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const unsubscribe = onSnapshot(doc(db, collectionName, docId), (snapshot) => {
-            if (snapshot.exists()) {
-                setData(snapshot.data());
-            }
-            setLoading(false);
-        }, (err) => {
-            console.error(`Error fetching document ${collectionName}/${docId}:`, err);
-            setError(err);
-            setLoading(false);
-        });
-
-        return () => unsubscribe();
+        console.warn(`useDocument called for ${collectionName}/${docId}, but Firestore is removed.`);
     }, [collectionName, docId]);
 
     return { data, loading, error };

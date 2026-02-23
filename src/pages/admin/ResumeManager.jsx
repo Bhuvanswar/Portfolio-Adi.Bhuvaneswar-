@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { db } from "../../firebase";
 import { upload } from "@vercel/blob/client";
-import { doc, setDoc } from "firebase/firestore";
 import { HiOutlineCloudUpload, HiOutlineDocumentText } from "react-icons/hi";
 
 export default function ResumeManager() {

@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { db } from "../../firebase";
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "firebase/firestore";
 import { HiOutlineTrash, HiOutlinePencilAlt, HiOutlinePlus } from "react-icons/hi";
 
 export default function ProjectManager() {
@@ -16,7 +14,7 @@ export default function ProjectManager() {
     });
     const [loading, setLoading] = useState(true);
 
-    const projectsCollection = collection(db, "projects");
+    // const projectsCollection = collection(db, "projects");
 
     const fetchProjects = async () => {
         try {

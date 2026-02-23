@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { db } from "../../firebase";
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "firebase/firestore";
 import { HiOutlineTrash, HiOutlinePencilAlt, HiOutlinePlus } from "react-icons/hi";
 
 export default function AchievementManager() {
@@ -16,7 +14,7 @@ export default function AchievementManager() {
     });
     const [loading, setLoading] = useState(true);
 
-    const achievementsCollection = collection(db, "achievements");
+    // const achievementsCollection = collection(db, "achievements");
 
     const fetchAchievements = async () => {
         try {
