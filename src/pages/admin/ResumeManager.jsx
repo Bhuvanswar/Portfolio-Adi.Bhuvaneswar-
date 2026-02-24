@@ -1,12 +1,33 @@
-import { useState } from "react";
-import { upload } from "@vercel/blob/client";
+import { useState, useEffect } from "react";
 import { HiOutlineCloudUpload, HiOutlineDocumentText } from "react-icons/hi";
+import { supabase } from "../../supabaseClient";
 
 export default function ResumeManager() {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [status, setStatus] = useState("");
+    const [currentResumeUrl, setCurrentResumeUrl] = useState("");
+
+    useEffect(() => {
+        // Fetch current resume URL from bio table
+        const fetchResumeUrl = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from("bio")
+                    .select("resume_url")
+                    .limit(1)
+                    .single();
+                
+                if (data && data.resume_url) {
+                    setCurrentResumeUrl(data.resume_url);
+                }
+            } catch (err) {
+                console.error("Error fetching resume URL:", err);
+            }
+        };
+        fetchResumeUrl();
+    }, []);
 
     const handleFileChange = (e) => {
         if (e.target.files[0]) {
@@ -18,27 +39,50 @@ export default function ResumeManager() {
         if (!file) return;
 
         setUploading(true);
-        setStatus("Uploading to Vercel Blob...");
+        setStatus("Uploading to Supabase Storage...");
         setProgress(10);
 
         try {
-            const newBlob = await upload(file.name, file, {
-                access: 'public',
-                handleUploadUrl: '/api/upload',
-                onUploadProgress: (progressEvent) => {
-                    setProgress(progressEvent.percentage);
-                },
-            });
+            // Upload file to Supabase Storage bucket 'resume'
+            const fileName = `resume_${Date.now()}_${file.name}`;
+            
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('resume')
+                .upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
 
-            setStatus("Saving link to Firestore...");
-            setProgress(90);
+            if (uploadError) throw uploadError;
 
-            // Update the global configuration with the new resume URL
-            await setDoc(doc(db, "config", "resume"), {
-                url: newBlob.url,
-                updatedAt: new Date().toISOString()
-            });
+            setProgress(60);
 
+            // Get public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('resume')
+                .getPublicUrl(fileName);
+
+            setStatus("Saving link to database...");
+            setProgress(80);
+
+            // Check if bio record exists
+            const { data: existingBio } = await supabase
+                .from("bio")
+                .select("id")
+                .limit(1)
+                .single();
+
+            if (existingBio) {
+                // Update existing record
+                const { error: updateError } = await supabase
+                    .from("bio")
+                    .update({ resume_url: publicUrl })
+                    .eq("id", existingBio.id);
+                
+                if (updateError) throw updateError;
+            }
+
+            setCurrentResumeUrl(publicUrl);
             setStatus("Resume updated successfully!");
             setFile(null);
             setProgress(0);
@@ -61,6 +105,20 @@ export default function ResumeManager() {
                 <p className="text-gray-400 mb-10 leading-relaxed">
                     Upload a new PDF to update your resume link across the entire portfolio instantly.
                 </p>
+
+                {currentResumeUrl && (
+                    <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                        <p className="text-sm text-emerald-400 mb-2">Current Resume:</p>
+                        <a 
+                            href={currentResumeUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-white hover:underline break-all"
+                        >
+                            {currentResumeUrl}
+                        </a>
+                    </div>
+                )}
 
                 <div className="space-y-8">
                     <div className="relative group">

@@ -1,17 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
 import ProjectModal from "../components/ProjectModal";
-import { useCollection } from "../hooks/useContent";
+import { supabase } from "../supabaseClient";
 
 export default function Projects() {
     const [selectedProject, setSelectedProject] = useState(null);
-    const { data: firestoreProjects, loading } = useCollection("projects", "title", "asc");
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from("projects")
+                    .select("*")
+                    .order("title", { ascending: true });
+                
+                if (error) throw error;
+                setProjects(data || []);
+            } catch (err) {
+                console.error("Error fetching projects:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProjects();
+    }, []);
 
     if (loading) {
         return <div className="flex items-center justify-center min-h-screen text-white">Loading projects...</div>;
     }
-
-    const projects = firestoreProjects || [];
 
     return (
         <div className="min-h-screen py-32 px-6 flex flex-col items-center">

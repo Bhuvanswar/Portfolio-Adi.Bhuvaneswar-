@@ -12,7 +12,7 @@ export default function AchievementCard({ achievement }) {
                 <div className="mb-6">
                     <div className="flex justify-between items-start mb-2">
                         <h3 className="text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">
-                            {achievement.title}
+                            {achievement.achievement_title || achievement.title}
                         </h3>
                         <span className="text-sm font-mono text-emerald-300 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                             {achievement.date}
@@ -28,7 +28,7 @@ export default function AchievementCard({ achievement }) {
                 </p>
 
                 <div className="space-y-3 mb-8 flex-grow">
-                    {achievement.highlights.map((point, index) => (
+                    {(achievement.highlights || []).map((point, index) => (
                         <div key={index} className="flex items-start gap-3">
                             <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-cyan-400 shrink-0" />
                             <p className="text-sm group-hover:text-yellow-400 text-white">{point}</p>
@@ -36,7 +36,7 @@ export default function AchievementCard({ achievement }) {
                     ))}
                 </div>
 
-                {achievement.images && (
+                {achievement.images && achievement.images.length > 0 && (
                     <div className="grid grid-cols-2 gap-4 mb-8">
                         {achievement.images.map((img, index) => (
                             <div key={index} className="relative overflow-hidden rounded-xl border border-white/10 group/img">

@@ -1,15 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AchievementCard from "../components/AchievementCard";
-import { useCollection } from "../hooks/useContent";
+import { supabase } from "../supabaseClient";
 
 export default function Achievements() {
-    const { data: firestoreAchievements, loading } = useCollection("achievements", "date", "desc");
+    const [achievements, setAchievements] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchAchievements = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from("achievement")
+                    .select("*")
+                    .order("date", { ascending: false });
+                if (error) throw error;
+                setAchievements(data || []);
+            } catch (err) {
+                console.error("Error fetching achievements:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAchievements();
+    }, []);
 
     if (loading) {
         return <div className="flex items-center justify-center min-h-screen text-white">Loading achievements...</div>;
     }
 
-    const achievements = firestoreAchievements || [];
+    const achievementList = achievements || [];
+    console.log(achievementList);
+
 
     return (
         <div className="min-h-screen py-32 px-6 flex flex-col items-center relative bg-black/10 overflow-hidden">
@@ -31,19 +52,27 @@ export default function Achievements() {
 
             {/* Achievements List */}
             <div className="w-full max-w-5xl grid grid-cols-1 gap-16 relative z-10 px-4 md:px-0">
-                {achievements.map((achievement) => (
-                    <AchievementCard key={achievement.id} achievement={achievement} />
+                {achievementList.map((achievement) => (
+                    <AchievementCard 
+                        key={achievement.id} 
+                        achievement={{
+                            ...achievement,
+                            title: achievement.achievement_title
+                        }} 
+                    />
                 ))}
 
                 {/* Placeholder for future expansion */}
-                <div className="border-2 border-dashed border-white/10 rounded-3xl p-12 flex flex-col items-center justify-center opacity-40 hover:opacity-60 transition-opacity">
-                    <div className="p-4 rounded-full bg-white/5 mb-4">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
+                {achievementList.length === 0 && (
+                    <div className="border-2 border-dashed border-white/10 rounded-3xl p-12 flex flex-col items-center justify-center opacity-40 hover:opacity-60 transition-opacity">
+                        <div className="p-4 rounded-full bg-white/5 mb-4">
+                            <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                        <p className="text-gray-400 font-medium tracking-wider">MORE MILESTONES COMING SOON</p>
                     </div>
-                    <p className="text-gray-400 font-medium tracking-wider">MORE MILESTONES COMING SOON</p>
-                </div>
+                )}
             </div>
         </div>
     );

@@ -16,7 +16,7 @@ export default function ProjectModal({ project, onClose }) {
                 <div className="flex flex-col md:flex-row">
                     <div className="md:w-1/2">
                         <img
-                            src={project.image}
+                            src={project.imageurl || project.image}
                             alt={project.title}
                             className="w-full h-full object-cover min-h-[300px]"
                         />
@@ -27,7 +27,7 @@ export default function ProjectModal({ project, onClose }) {
                         <div className="mb-6">
                             <h4 className="text-sm font-semibold text-emerald-200 uppercase tracking-widest mb-2">Technologies</h4>
                             <div className="flex flex-wrap gap-2">
-                                {project.technologies.map((tech) => (
+                                {(project.technologies || []).map((tech) => (
                                     <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-white/80">
                                         {tech}
                                     </span>
@@ -38,12 +38,12 @@ export default function ProjectModal({ project, onClose }) {
                         <div className="mb-8">
                             <h4 className="text-sm font-semibold text-emerald-200 uppercase tracking-widest mb-2">Details</h4>
                             <p className="text-gray-300 leading-relaxed">
-                                {project.longDescription}
+                                {project.long_description || project.longDescription}
                             </p>
                         </div>
 
                         <a
-                            href={project.link}
+                            href={project.github_link || project.link}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center px-6 py-3 bg-cyan-500 text-black font-bold rounded-full hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
