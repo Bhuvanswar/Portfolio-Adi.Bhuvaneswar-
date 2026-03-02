@@ -16,7 +16,7 @@ export default function ProjectModal({ project, onClose }) {
                 <div className="flex flex-col md:flex-row">
                     <div className="md:w-1/2">
                         <img
-                            src={project.imageurl || project.image}
+                            src={project.image_url || project.image}
                             alt={project.title}
                             className="w-full h-full object-cover min-h-[300px]"
                         />

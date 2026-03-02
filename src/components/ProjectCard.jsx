@@ -6,7 +6,7 @@ export default function ProjectCard({ project, onClick }) {
         >
             <div className="aspect-video w-full overflow-hidden">
                 <img
-                    src={project.imageurl || project.image}
+                    src={project.image_url || project.image}
                     alt={project.title}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
