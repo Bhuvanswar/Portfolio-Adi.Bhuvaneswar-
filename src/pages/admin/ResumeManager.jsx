@@ -18,7 +18,7 @@ export default function ResumeManager() {
                     .select("resume_url")
                     .limit(1)
                     .single();
-                
+
                 if (data && data.resume_url) {
                     setCurrentResumeUrl(data.resume_url);
                 }
@@ -44,13 +44,14 @@ export default function ResumeManager() {
 
         try {
             // Upload file to Supabase Storage bucket 'resume'
-            const fileName = `resume_${Date.now()}_${file.name}`;
-            
+            const fileName = `Resume_${Date.now()}_${file.name}`;
+
             const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('resume')
+                .from('Resume')
                 .upload(fileName, file, {
                     cacheControl: '3600',
-                    upsert: true
+                    upsert: true,
+                    contentType: 'application/pdf'
                 });
 
             if (uploadError) throw uploadError;
@@ -59,7 +60,7 @@ export default function ResumeManager() {
 
             // Get public URL
             const { data: { publicUrl } } = supabase.storage
-                .from('resume')
+                .from('Resume')
                 .getPublicUrl(fileName);
 
             setStatus("Saving link to database...");
@@ -78,7 +79,7 @@ export default function ResumeManager() {
                     .from("bio")
                     .update({ resume_url: publicUrl })
                     .eq("id", existingBio.id);
-                
+
                 if (updateError) throw updateError;
             }
 
@@ -109,9 +110,9 @@ export default function ResumeManager() {
                 {currentResumeUrl && (
                     <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
                         <p className="text-sm text-emerald-400 mb-2">Current Resume:</p>
-                        <a 
-                            href={currentResumeUrl} 
-                            target="_blank" 
+                        <a
+                            href={currentResumeUrl}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="text-white hover:underline break-all"
                         >
