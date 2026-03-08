@@ -8,7 +8,6 @@ export default function ResumeManager() {
     const [progress, setProgress] = useState(0);
     const [status, setStatus] = useState("");
     const [currentResumeUrl, setCurrentResumeUrl] = useState("");
-
     useEffect(() => {
         // Fetch current resume URL from bio table
         const fetchResumeUrl = async () => {
@@ -44,7 +43,7 @@ export default function ResumeManager() {
 
         try {
             // Upload file to Supabase Storage bucket 'resume'
-            const fileName = `Resume_${Date.now()}_${file.name}`;
+            const fileName = `${file.name}`;
 
             const { data: uploadData, error: uploadError } = await supabase.storage
                 .from('Resume')
@@ -112,11 +111,12 @@ export default function ResumeManager() {
                         <p className="text-sm text-emerald-400 mb-2">Current Resume:</p>
                         <a
                             href={currentResumeUrl}
+
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-white hover:underline break-all"
                         >
-                            {currentResumeUrl}
+                            {"Adi_Bhuvaneswar.pdf"}
                         </a>
                     </div>
                 )}
