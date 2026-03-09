@@ -14,7 +14,8 @@ export default function ProjectManager() {
         long_description: "",
         technologies: "",
         image_url: "",
-        github_link: ""
+        github_link: "",
+        LiveDemo: ""
     };
 
     const fetchProjects = async () => {
@@ -188,6 +189,14 @@ export default function ProjectManager() {
                                 setCurrentProject({ ...currentProject, github_link: e.target.value })
                             }
                             placeholder="GitHub Link"
+                        />
+                        <input
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4"
+                            value={currentProject.live_demo}
+                            onChange={(e) =>
+                                setCurrentProject({ ...currentProject, live_demo: e.target.value })
+                            }
+                            placeholder="Live Demo"
                         />
 
                         <div className="flex gap-4">
